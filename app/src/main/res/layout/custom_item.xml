@@ -22,7 +22,7 @@
                 android:id="@+id/itemImageView"
                 android:layout_width="171dp"
                 android:layout_height="92dp"
-                app:srcCompat="@drawable/ic_launcher_background" />
+                app:srcCompat="@android:drawable/ic_delete" />
 
             <LinearLayout
                 android:layout_width="171dp"

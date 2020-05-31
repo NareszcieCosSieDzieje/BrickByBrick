@@ -28,7 +28,7 @@ class dbHandler(context: Context) :
 
 
     companion object {
-        private val DATABASE_VERSION = 1;
+        private val DATABASE_VERSION = 2;
         private val DATABASE_NAME = "BrickList";
         private val DATABASE_PATH = "databases";
 
@@ -47,6 +47,7 @@ class dbHandler(context: Context) :
         private val INVENTORY_PARTS_QUANTITY_IN_STORE = "QuantityInStore";
         private val INVENTORY_PARTS_COLOR_ID = "ColorID";
         private val INVENTORY_PARTS_EXTRA = "Extra";
+        private val INVENTORY_PARTS_PHOTO_PATH = "PhotoPath";
     }
 
 
@@ -206,6 +207,21 @@ class dbHandler(context: Context) :
         return _success;
     }
 
+    fun getItemCode(inventoryParts: InventoryParts): String {
+        var cursor: Cursor? = null
+        var code: String = "";
+        try {
+            cursor = this.readableDatabase.rawQuery("SELECT * FROM Codes WHERE itemID=? AND colorID=?", arrayOf(inventoryParts.itemId, inventoryParts.colorId.toString()))
+            if (cursor!!.moveToFirst()) {
+                code = cursor.getString(cursor.getColumnIndex("Code"));
+            }
+        } catch (e: SQLiteException) {
+            Log.d("GET_ITEM_CODE_ERROR", e.stackTrace.toString());
+            throw RuntimeException("Error loading item code!")
+        }
+        return code;
+    }
+
     fun addInventoryParts( inventoryParts: InventoryParts ): Boolean {
         val values: ContentValues = ContentValues();
         values.put(INVENTORY_PARTS_INVENTORY_ID, inventoryParts.inventoryId);
@@ -215,10 +231,17 @@ class dbHandler(context: Context) :
         values.put(INVENTORY_PARTS_QUANTITY_IN_STORE, inventoryParts.quantityInStore);
         values.put(INVENTORY_PARTS_COLOR_ID, inventoryParts.colorId);
         values.put(INVENTORY_PARTS_EXTRA, inventoryParts.extra);
+        values.put(INVENTORY_PARTS_PHOTO_PATH, inventoryParts.photoPath);
         val _success: Boolean = this.writableDatabase.insert(INVENTORY_TABLE_PARTS, null, values) > 0;
         return _success;
    }
 
+    fun updateInventoryPartsPhotoPath(inventoryParts: InventoryParts) : Boolean {
+        val values: ContentValues = ContentValues();
+        values.put(INVENTORY_PARTS_PHOTO_PATH, inventoryParts.photoPath);
+        val _success: Boolean = this.writableDatabase.update(INVENTORY_TABLE_PARTS, values,  "$INVENTORY_PARTS_ID=?", arrayOf(inventoryParts.id.toString())) > 0
+        return _success;
+    }
 
     fun updateInventoryParts( inventoryParts: InventoryParts ): Boolean{
         val values: ContentValues = ContentValues();
@@ -229,6 +252,7 @@ class dbHandler(context: Context) :
         values.put(INVENTORY_PARTS_QUANTITY_IN_STORE, inventoryParts.quantityInStore);
         values.put(INVENTORY_PARTS_COLOR_ID, inventoryParts.colorId);
         values.put(INVENTORY_PARTS_EXTRA, inventoryParts.extra);
+        values.put(INVENTORY_PARTS_PHOTO_PATH, inventoryParts.photoPath);
         val _success: Boolean = this.writableDatabase.update(INVENTORY_TABLE_PARTS, values,  "$INVENTORY_PARTS_ID=?", arrayOf(inventoryParts.id.toString())) > 0
         return _success;
     }
@@ -258,7 +282,6 @@ class dbHandler(context: Context) :
                 name = cursor.getString(cursor.getColumnIndex(INVENTORY_NAME));
                 active = cursor.getString(cursor.getColumnIndex(INVENTORY_ACTIVE)).toInt() == 1;
                 lastAccessed = LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(INVENTORY_LASTACCESSED)));
-                //TODO: print czy to działa wgl
                 inventoryList.add(Inventory(id,name,active, lastAccessed))
                 cursor.moveToNext()
             }
@@ -282,6 +305,7 @@ class dbHandler(context: Context) :
         var quantityInStore: Int;
         var colorId: Int;
         var extra: Int;
+        var photoPath: String;
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
                 id = cursor.getString(cursor.getColumnIndex(INVENTORY_PARTS_ID)).toString().toInt();
@@ -291,8 +315,8 @@ class dbHandler(context: Context) :
                 quantityInStore = cursor.getString(cursor.getColumnIndex(INVENTORY_PARTS_QUANTITY_IN_STORE)).toString().toInt();
                 colorId = cursor.getString(cursor.getColumnIndex(INVENTORY_PARTS_COLOR_ID)).toString().toInt();
                 extra = cursor.getString(cursor.getColumnIndex(INVENTORY_PARTS_EXTRA)).toString().toInt();
-
-                inventoryPartsList.add(InventoryParts(id, _inventoryId, typeId, itemId, quantityInSet, quantityInStore, colorId, extra));
+                photoPath = cursor.getString(cursor.getColumnIndex(INVENTORY_PARTS_PHOTO_PATH)).toString();
+                inventoryPartsList.add(InventoryParts(id, _inventoryId, typeId, itemId, quantityInSet, quantityInStore, colorId, extra, photoPath));
                 cursor.moveToNext()
             }
         }

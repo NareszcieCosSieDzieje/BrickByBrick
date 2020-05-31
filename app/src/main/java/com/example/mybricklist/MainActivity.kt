@@ -84,30 +84,8 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         this.archived =  preferences.getBoolean(ARCHIVED_ITEMS, false);
 
         val db = dbHandler(this);
-        //Log.d("EPIC_LIST", db.getAllInventories().toString());
-        //db.showAllTables();
 
         //db.clearAll();
-//
-//        val xmlHelper = XML_Helper(db);
-//        xmlHelper.execute(*arrayOf("http://fcds.cs.put.poznan.pl/MyWeb/BL/70403.xml", "70403", "Smocza Góra"));
-//
-//        TimeUnit.SECONDS.sleep(4L)
-
-//        //db.showAllTables();
-//
-//        var l = db.getAllInventories();
-//        var iterator = l.listIterator();
-//        for (item in iterator) {
-//            Log.d("ITEM1:", "$item");
-//        }
-//
-//
-//        var ll = db.getAllInventoryParts(70403);
-//        var iteratorr = ll.listIterator();
-//        for (itemm in iteratorr) {
-//            Log.d("ITEM2:", "$itemm");
-//        }
 
 
         var inventories = db.getAllInventories();

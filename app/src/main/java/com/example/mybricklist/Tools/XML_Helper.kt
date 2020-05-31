@@ -2,6 +2,7 @@ package com.example.mybricklist.Tools
 
 import android.content.Context
 import android.os.AsyncTask
+import android.os.AsyncTask.execute
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -120,6 +121,7 @@ class XML_Helper(db: dbHandler, context: Context) : AsyncTask<String, Int?, Stri
                 if(addItem){
                     inventoryPart!!.inventoryId = inventory.id;
                     inventoryPart!!.quantityInStore = 0;
+                    inventoryPart!!.photoPath = "";
                     inventoryPart?.let {
                         Log.d("INVENTORY PART", inventoryPart.toString());
                         db.addInventoryParts(inventoryPart);
@@ -161,6 +163,9 @@ class XML_Helper(db: dbHandler, context: Context) : AsyncTask<String, Int?, Stri
                 this.shouldDisplay = true;
             }
         }
+
+       // Toast.makeText(mCtx, "Dodawanie zdjęć!", Toast.LENGTH_SHORT).show();
+        val img = ImageLoader(mCtx, db, db.getAllInventoryParts(id)).execute(*arrayOf(""));
         return "Success";
     }
 }

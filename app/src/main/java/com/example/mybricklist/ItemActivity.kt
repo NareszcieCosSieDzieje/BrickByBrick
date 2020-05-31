@@ -43,11 +43,6 @@ class ItemActivity : AppCompatActivity() {
         }
 
 
-        checkItemButton.setOnClickListener(){
-            //TODO: DOROBIC
-        }
-
-
         setNumberEditText.setOnClickListener{
             if(numberOnce){
                 setNumberEditText.setText("")

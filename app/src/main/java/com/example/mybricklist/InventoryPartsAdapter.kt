@@ -1,6 +1,7 @@
 package com.example.mybricklist
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,10 @@ import android.widget.TextView
 import com.example.mybricklist.DataBaseHandler.dbHandler
 import com.example.mybricklist.Model.InventoryParts
 
+
 class InventoryPartsAdapter(var mCtx: Context, var resources: Int, var items: List<InventoryParts>, dbHandler: dbHandler): ArrayAdapter<InventoryParts>(mCtx, resources, items) {
 
+    val fileType = "pictures";
     val db = dbHandler;
     var data = items;
 
@@ -28,6 +31,12 @@ class InventoryPartsAdapter(var mCtx: Context, var resources: Int, var items: Li
         val itemMinusButton: Button = view.findViewById(R.id.itemMinusButton);
 
         var mItem: InventoryParts = items[position];
+
+        //FIXME:   val fileType = "pictures";   File(mCtx.getExternalFilesDir(fileType), "${itemId}_${code}.jpg").writeBitmap(bmp, Bitmap.CompressFormat.JPEG, 85)
+        if(mItem.photoPath != "") {
+            val bmImg = BitmapFactory.decodeFile(mItem.photoPath);
+            itemImageView.setImageBitmap(bmImg);
+        }
 
         if(mItem.quantityInStore == mItem.quantityInSet){
             view.setBackgroundColor(Color.GREEN);

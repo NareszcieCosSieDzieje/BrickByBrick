@@ -17,8 +17,8 @@ class ImageLoader(context: Context, dbHandler: dbHandler, inventoryPartslist: Mu
 
     val fileType = "pictures";
     val legoLink = "https://www.lego.com/service/bricks/5/2/"; // +   code = 300126
-    val bricklinkColorLink = "http://img.bricklink.com/P/7/3001old.gif";
-    val bricklinkNoColorLink = "https://www.bricklink.com/PL/3430c02.jpg";
+    val bricklinkColorLink = "http://img.bricklink.com/P/"; //color/code.gif?
+    val bricklinkNoColorLink = "https://www.bricklink.com/PL/"; //code.jpg
 
     val mCtx = context;
     val db = dbHandler;
@@ -28,21 +28,29 @@ class ImageLoader(context: Context, dbHandler: dbHandler, inventoryPartslist: Mu
 
         //TODO: for each list for each link if prev not success
 
-        list.forEach{
-
+        list.forEach lit@{
             val color = it.colorId.toString();
-
-            listOf(legoLink, bricklinkColorLink, bricklinkNoColorLink).forEach{
+            val itemId = it.itemId;
+            var code = "";
+            code = db.getItemCode(it);
+            val iterator = listOf(legoLink, bricklinkColorLink, bricklinkNoColorLink).listIterator()
+            var linkOk = false;
+            for (item in iterator) {
                 var link = "";
-                if(it == legoLink){
-                    link = legoLink + elementCode;
-                } else if (it == bricklinkColorLink){
-                    link = bricklinkNoColorLink + elementCode;      //+ ".jpg"; //TODO: jpg|gif?
-                } else if (it == bricklinkNoColorLink){
-                    link = bricklinkColorLink + color + elementCode; //+ ".jpg"; //TODO: to samo gif czy jpg
+                var path = "";
+                if(item == legoLink){
+                    if(code == ""){
+                        continue;
+                    }
+                    link = legoLink + code;
+                    path = link;
+                } else if (item == bricklinkColorLink){
+                    link = bricklinkColorLink + color + '/' + itemId;  //+ ".gif"; //TODO: jpg|gif?
+                    path = link + ".gif";
+                } else if (item == bricklinkNoColorLink){
+                    link = bricklinkNoColorLink + itemId; //TODO: to samo gif czy jpg
+                    path = link + ".jpg";
                 }
-
-                //val path = params[0]; //FIXME:
 
                 var `in`: InputStream? = null
                 var bmp: Bitmap? = null
@@ -54,18 +62,24 @@ class ImageLoader(context: Context, dbHandler: dbHandler, inventoryPartslist: Mu
                     con.connect()
                     responseCode = con.getResponseCode()
                     if (responseCode == HttpURLConnection.HTTP_OK) {
+                        linkOk = true;
                         //download
                         `in` = con.getInputStream()
                         bmp = BitmapFactory.decodeStream(`in`)
                         `in`.close()
-                        File(mCtx.getExternalFilesDir(fileType), nazwa_pliku).writeBitmap(bmp, Bitmap.CompressFormat.JPEG, 85)
+                        File(mCtx.getExternalFilesDir(fileType), "${itemId}_${code}.jpg").writeBitmap(bmp, Bitmap.CompressFormat.JPEG, 85)
+                    }
+                    if(linkOk){
+                        it.photoPath = mCtx.getExternalFilesDir(fileType).toString() + "/${itemId}_${code}.jpg";
+                        db.updateInventoryPartsPhotoPath(it);
+                        break;
                     }
                 } catch (ex: Exception) {
                     Log.e("Exception", ex.toString())
                 }
-
             }
         }
+        return "Success";
     }
 
     private fun File.writeBitmap(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {

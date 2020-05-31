@@ -10,6 +10,7 @@ class InventoryParts constructor() {
     var quantityInStore: Int = 0;
     var colorId: Int = 0;
     var extra: Int = 0;
+    var photoPath: String = "";
 
     constructor(
         id: Int,
@@ -19,7 +20,8 @@ class InventoryParts constructor() {
         quantityInSet: Int,
         quantityInStore: Int,
         colorId: Int,
-        extra: Int
+        extra: Int,
+        photoPath: String
     ) : this() {
         this.id = id
         this.inventoryId = inventoryId;
@@ -29,13 +31,11 @@ class InventoryParts constructor() {
         this.quantityInStore = quantityInStore;
         this.colorId = colorId;
         this.extra = extra;
+        this.photoPath = photoPath;
     }
 
     override fun toString(): String {
-        return "InventoryParts(id=$id, inventoryId=$inventoryId, typeId=$typeId, itemId=$itemId, quantityInSet=$quantityInSet, quantityInStore=$quantityInStore, colorId=$colorId, extra=$extra)"
+        return "InventoryParts(id=$id, inventoryId=$inventoryId, typeId=$typeId, itemId=$itemId, quantityInSet=$quantityInSet, quantityInStore=$quantityInStore, colorId=$colorId, extra=$extra, photopath = $photoPath)"
     }
-
-
-    //TODO: var img: Image? = null;
 
 }
