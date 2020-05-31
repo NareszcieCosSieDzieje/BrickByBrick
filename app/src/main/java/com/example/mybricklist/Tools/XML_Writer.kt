@@ -30,6 +30,11 @@ class XML_Writer(inventoryPartslist: MutableList<InventoryParts>, context: Conte
             return;
         }
 
+        if(list == null || list.isEmpty()){
+            Toast.makeText(context, "Zestaw kompletny, brak niekompletnych części.", Toast.LENGTH_LONG);
+            return;
+        }
+
         val docBuilder: DocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val doc: Document = docBuilder.newDocument()
         val rootElement: Element =  doc.createElement("INVENTORY");

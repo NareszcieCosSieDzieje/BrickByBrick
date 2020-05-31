@@ -1,5 +1,6 @@
 package com.example.mybricklist.Tools
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
 import android.os.AsyncTask.execute
@@ -26,32 +27,38 @@ class XML_Helper(db: dbHandler, context: Context) : AsyncTask<String, Int?, Stri
 
     val db = db;
     val mCtx = context;
-    var message = "";
+    var message = "Dodano projekt!";
     var shouldDisplay = false;
+    var invId = 0;
+
+    var successEndState = false;
 
     override fun onPreExecute() {
         super.onPreExecute()
-        if(this.shouldDisplay){
-            Toast.makeText(mCtx, this.message, Toast.LENGTH_LONG).show();
-        }
+        Toast.makeText(mCtx, "Dodawanie projektu!", Toast.LENGTH_SHORT).show();
     }
 
     override fun onPostExecute(result: String?) {
-        super.onPostExecute(result)
-        Toast.makeText(mCtx, message, Toast.LENGTH_LONG).show();
+        super.onPostExecute(result);
+        Toast.makeText(mCtx, message, Toast.LENGTH_SHORT).show();
+        if(successEndState) {
+            val img = ImageLoader(mCtx, db, db.getAllInventoryParts(invId)).execute(*arrayOf(""));
+        }
     }
 
 //    override fun onProgressUpdate(vararg values: Int?) {
 //        super.onProgressUpdate(*values)
 //    }
 
+    @SuppressLint("WrongThread")
     override fun doInBackground(vararg params: String?): String {
-        var endState = false;
+        var endState = true;
         var id: Int = 0;
         var name: String = "";
         try{
 
             id = params[1]!!.toInt();
+            invId = id;
             name = params[2]!!;
 
             val url = URL(params[0]);
@@ -108,6 +115,7 @@ class XML_Helper(db: dbHandler, context: Context) : AsyncTask<String, Int?, Stri
                         if(alt != "N"){
                             addItem = false;
                         }
+                        endState = false;
                     }
                     else if (tagname.equals("MATCHID", ignoreCase = true)) {
                         //DO NOTHING
@@ -130,7 +138,6 @@ class XML_Helper(db: dbHandler, context: Context) : AsyncTask<String, Int?, Stri
                 }
                 eventType = parser.next()
             }
-            endState=true;
             isStream.close();
         } catch (ce: ConnectException) {
             this.message = "Błąd połączenia!";
@@ -150,22 +157,19 @@ class XML_Helper(db: dbHandler, context: Context) : AsyncTask<String, Int?, Stri
         } catch (be: BadIdException){
             this.message = "Istnieje już projekt o takim numerze!";
             this.shouldDisplay = true;
-            endState=true;
             be.printStackTrace();
         } catch(ne: IllegalArgumentException) {
             this.message = "Nie podano numeru zestawu!";
             this.shouldDisplay = true;
-            endState=true;
             ne.printStackTrace();
         } finally {
-            if(!endState){
+            if(endState && !shouldDisplay){
                 this.message = "Błąd dodawania projektu! Sprawdź numer zestawu LEGO";
-                this.shouldDisplay = true;
+            } else if (!shouldDisplay) {
+                successEndState = true;
             }
         }
 
-       // Toast.makeText(mCtx, "Dodawanie zdjęć!", Toast.LENGTH_SHORT).show();
-        val img = ImageLoader(mCtx, db, db.getAllInventoryParts(id)).execute(*arrayOf(""));
         return "Success";
     }
 }

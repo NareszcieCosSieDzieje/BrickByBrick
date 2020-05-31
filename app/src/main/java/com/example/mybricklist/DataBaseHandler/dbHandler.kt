@@ -202,8 +202,8 @@ class dbHandler(context: Context) :
     }
 
     fun deleteInventory( _id: Int ): Boolean {
-        var _success: Boolean = this.writableDatabase.delete(INVENTORY_TABLE, "$INVENTORY_ID=?", arrayOf(_id.toString())) > 0
-        _success = this.deleteInventoryParts(_id);
+        var succ = this.writableDatabase.delete(INVENTORY_TABLE, "$INVENTORY_ID=?", arrayOf(_id.toString())) > 0;
+        var _success = this.deleteInventoryParts(_id);
         return _success;
     }
 

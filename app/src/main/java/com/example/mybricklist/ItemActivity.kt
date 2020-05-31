@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.mybricklist.DataBaseHandler.dbHandler
+import com.example.mybricklist.Tools.ImageLoader
 import com.example.mybricklist.Tools.XML_Helper
 import kotlinx.android.synthetic.main.activity_item.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -16,7 +17,7 @@ class ItemActivity : AppCompatActivity() {
 
     var nameOnce: Boolean = true;
     var numberOnce: Boolean = true;
-    
+
 
     val XML_LINK = "XML_LINK";
     var URL_PREFIX = "http://fcds.cs.put.poznan.pl/MyWeb/BL/";
@@ -37,8 +38,7 @@ class ItemActivity : AppCompatActivity() {
             URL_PREFIX = preferences.getString(XML_LINK, "http://fcds.cs.put.poznan.pl/MyWeb/BL/").toString();
             val URL = URL_PREFIX + num + URL_SUFFIX;
             xmlHelper.execute(*arrayOf(URL, num, name));
-            Toast.makeText(this, "Dodawanie projektu!", Toast.LENGTH_SHORT).show();
-            //TimeUnit.SECONDS.sleep(2L);
+            //TimeUnit.MILLISECONDS.sleep(1L);
         }
 
 

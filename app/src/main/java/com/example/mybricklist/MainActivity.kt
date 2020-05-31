@@ -5,22 +5,17 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mybricklist.DataBaseHandler.dbHandler
 import com.example.mybricklist.Model.Inventory
-import com.example.mybricklist.Tools.XML_Helper
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 import java.time.LocalDateTime
-import java.util.concurrent.TimeUnit
-import java.util.jar.Manifest
 
 
 class MainActivity : AppCompatActivity(), OnItemClickListener {
@@ -46,19 +41,27 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         builder.setTitle("USUWANIE PROJEKTU")
         builder.setMessage("Czy chcesz usunąć projekt z bazy danych?")
         var delete = false;
-
+        val id = inventory.id;
         builder.setPositiveButton(android.R.string.yes) { dialog, which ->
             delete = true;
             Toast.makeText(applicationContext, "Usuwanie projektu.", Toast.LENGTH_SHORT).show();
             val db = dbHandler(this);
             db.deleteInventory(inventory.id);
 
-            var inventories = db.getAllInventories();
-            var filteredInventories = inventories.filter { (it.isActive) || (archived) };
-            var sortedInventories = filteredInventories.sortedBy { it.lastAccessed }.reversed();
-
-            mainRecycleView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            mainRecycleView.adapter = InventoryAdapter(this, sortedInventories, db, this);
+            val fileType1 = "pictures";
+            val fileType2 = "SavedXMLS";
+            val folder: File? = this.getExternalFilesDir(fileType2);
+            if(folder != null){
+                val fileName: String = folder.path + "/${id}.xml";
+                val myFile = File(fileName)
+                if (myFile.exists()) {
+                    myFile.delete()
+                }
+            }
+            val picPath = this.getExternalFilesDir(fileType1);
+            var folderId = File(picPath.toString()+ '/' + id.toString());
+            deleteRecursive(folderId, true);
+            updateList()
         }
 
         builder.setNegativeButton(android.R.string.no) { dialog, which ->
@@ -85,8 +88,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
         val db = dbHandler(this);
 
-        //db.clearAll();
-
 
         var inventories = db.getAllInventories();
         var filteredInventories = inventories.filter { (it.isActive) || (archived) };
@@ -102,6 +103,38 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             Toast.makeText(this, "Istniejące projekty są nieaktywne!", Toast.LENGTH_SHORT).show();
         }
 
+        deleteAllButton.setOnClickListener{
+
+            var dialog:AlertDialog
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Usuwanie projektów.")
+            builder.setMessage("Czy chcesz usunąć wszystkie projekty?.")
+            val dialogClickListener = DialogInterface.OnClickListener{_,which ->
+                var shouldDelete = false;
+                when(which){
+                    DialogInterface.BUTTON_POSITIVE -> shouldDelete = true;
+                    DialogInterface.BUTTON_NEGATIVE -> shouldDelete = false;
+                    DialogInterface.BUTTON_NEUTRAL -> shouldDelete = false;
+                }
+                if(shouldDelete){
+                    db.clearAll();
+                    val fileType1 = "pictures";
+                    val fileType2 = "SavedXMLS";
+                    val picPath = this.getExternalFilesDir(fileType1);
+                    val xmlPath = this.getExternalFilesDir(fileType2);
+                    var fileA = File(picPath.toString());
+                    deleteRecursive(fileA, false);
+                    var fileB = File(xmlPath.toString());
+                    deleteRecursive(fileB, false);
+                    updateList();
+                }
+            }
+            builder.setPositiveButton("YES", dialogClickListener)
+            builder.setNegativeButton("NO", dialogClickListener)
+            builder.setNeutralButton("CANCEL", dialogClickListener)
+            dialog = builder.create()
+            dialog.show()
+        }
 
         goToSettingsButton.setOnClickListener(){
             val intent = Intent(this, SettingsActivity::class.java);
@@ -113,11 +146,35 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             startActivity(intent);
         }
 
-
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateList(){
+        val db = dbHandler(this);
+        var inventories = db.getAllInventories();
+        var filteredInventories = inventories.filter { (it.isActive) || (archived) };
+        var sortedInventories = filteredInventories.sortedBy { it.lastAccessed }.reversed();
+        mainRecycleView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mainRecycleView.adapter = InventoryAdapter(this, sortedInventories, db, this);
+        if(inventories.isEmpty()){
+            Toast.makeText(this, "Brak projektów!", Toast.LENGTH_SHORT).show();
+        } else if (filteredInventories.isEmpty()){
+            Toast.makeText(this, "Istniejące projekty są nieaktywne!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    private fun deleteRecursive(fileOrDirectory: File, inclusive: Boolean ) {
+        if (fileOrDirectory.isDirectory()){
+            var iter = fileOrDirectory.listFiles().iterator();
+            for (item in iter){
+                deleteRecursive(item, true);
+            }
+        }
+        if(inclusive){
+            fileOrDirectory.delete();
+        }
+    }
 
 
 
