@@ -26,7 +26,6 @@ class ImageLoader(context: Context, dbHandler: dbHandler, inventoryPartslist: Mu
 
     override fun doInBackground(vararg params: String?): String? {
 
-        //TODO: for each list for each link if prev not success
 
         list.forEach lit@{
             val color = it.colorId.toString();
@@ -45,10 +44,10 @@ class ImageLoader(context: Context, dbHandler: dbHandler, inventoryPartslist: Mu
                     link = legoLink + code;
                     path = link;
                 } else if (item == bricklinkColorLink){
-                    link = bricklinkColorLink + color + '/' + itemId;  //+ ".gif"; //TODO: jpg|gif?
+                    link = bricklinkColorLink + color + '/' + itemId;  //+ ".gif";
                     path = link + ".gif";
                 } else if (item == bricklinkNoColorLink){
-                    link = bricklinkNoColorLink + itemId; //TODO: to samo gif czy jpg
+                    link = bricklinkNoColorLink + itemId;
                     path = link + ".jpg";
                 }
 

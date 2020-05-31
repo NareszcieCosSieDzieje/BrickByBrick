@@ -191,7 +191,7 @@ class dbHandler(context: Context) :
         values.put(INVENTORY_NAME, inventory.name); //These Fields should be your String values of actual column names
         val active =  if (inventory.isActive) 1 else 0;
         values.put(INVENTORY_ACTIVE, active);
-        values.put(INVENTORY_LASTACCESSED, inventory.lastAccessed.toString()); //FIXME: CZY TO OKEJ?
+        values.put(INVENTORY_LASTACCESSED, inventory.lastAccessed.toString());
         val _success:Boolean = this.writableDatabase.update(INVENTORY_TABLE, values,  "$INVENTORY_ID=?", arrayOf(inventory.id.toString())) > 0;
         return _success;
     }

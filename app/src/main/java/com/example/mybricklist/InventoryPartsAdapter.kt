@@ -32,7 +32,6 @@ class InventoryPartsAdapter(var mCtx: Context, var resources: Int, var items: Li
 
         var mItem: InventoryParts = items[position];
 
-        //FIXME:   val fileType = "pictures";   File(mCtx.getExternalFilesDir(fileType), "${itemId}_${code}.jpg").writeBitmap(bmp, Bitmap.CompressFormat.JPEG, 85)
         if(mItem.photoPath != "") {
             val bmImg = BitmapFactory.decodeFile(mItem.photoPath);
             itemImageView.setImageBitmap(bmImg);
@@ -48,7 +47,6 @@ class InventoryPartsAdapter(var mCtx: Context, var resources: Int, var items: Li
             }
             this.db.updateInventoryParts(mItem);
             if(mItem.quantityInStore == mItem.quantityInSet){
-                //TODO: zablokuj dodwanie? wyłącz lisenera tego?
                 view.setBackgroundColor(Color.GREEN);
             }
             this.notifyDataSetChanged();

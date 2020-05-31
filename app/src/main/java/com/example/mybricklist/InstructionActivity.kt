@@ -19,7 +19,6 @@ class InstructionActivity : AppCompatActivity() {
 
         val db = dbHandler(this);
 
-        //TODO: ustaw listenery na buttony i na liste
 
         var adapter =  InventoryPartsAdapter(this, R.layout.custom_item, db.getAllInventoryParts(inventoryID).sortedWith( compareBy{ it.quantityInStore-it.quantityInSet==0 } ), db); // instructionListView
         inventorypartsListView.setAdapter(adapter);

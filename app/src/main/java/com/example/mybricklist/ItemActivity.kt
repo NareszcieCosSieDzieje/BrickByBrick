@@ -16,8 +16,7 @@ class ItemActivity : AppCompatActivity() {
 
     var nameOnce: Boolean = true;
     var numberOnce: Boolean = true;
-
-    //FIXME: ? var db: dbHandler? = null;
+    
 
     val XML_LINK = "XML_LINK";
     var URL_PREFIX = "http://fcds.cs.put.poznan.pl/MyWeb/BL/";
