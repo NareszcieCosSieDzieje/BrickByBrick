@@ -5,70 +5,67 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="350px">
-    <!--android:layout_height="match_parent">-->
 
     <LinearLayout
-        android:layout_width="177dp"
-        android:layout_height="131dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/itemImageView"
-            android:layout_width="168dp"
-            android:layout_height="96dp"
-            app:srcCompat="@drawable/ic_launcher_background" />
+        android:layout_width="397dp"
+        android:layout_height="133dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="2dp">
 
         <LinearLayout
-            android:layout_width="171dp"
-            android:layout_height="36dp"
-            android:orientation="horizontal">
+            android:layout_width="186dp"
+            android:layout_height="131dp"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/itemMinusButton"
-                android:layout_width="68dp"
-                android:layout_height="37dp"
-                android:text="-" />
+            <ImageView
+                android:id="@+id/itemImageView"
+                android:layout_width="171dp"
+                android:layout_height="92dp"
+                app:srcCompat="@drawable/ic_launcher_background" />
 
-            <Button
-                android:id="@+id/itemPlusButton"
-                android:layout_width="69dp"
-                android:layout_height="37dp"
-                android:layout_marginStart="28dp"
-                android:text="+" />
+            <LinearLayout
+                android:layout_width="171dp"
+                android:layout_height="36dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/itemMinusButton"
+                    android:layout_width="68dp"
+                    android:layout_height="37dp"
+                    android:text="-" />
+
+                <Button
+                    android:id="@+id/itemPlusButton"
+                    android:layout_width="69dp"
+                    android:layout_height="37dp"
+                    android:layout_marginStart="28dp"
+                    android:text="+" />
+            </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"></LinearLayout>
+        <LinearLayout
+            android:layout_width="212dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="212dp"
-        android:layout_height="97dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.919"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.523">
+            <TextView
+                android:id="@+id/itemDescriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="86dp"
+                android:gravity="center"
+                android:text="This is a description" />
 
-        <TextView
-            android:id="@+id/itemDescriptionTextView"
-            android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:text="This is a description" />
+            <TextView
+                android:id="@+id/itemCountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:gravity="center"
+                android:text="0 out of x" />
 
-        <TextView
-            android:id="@+id/itemCountTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:text="0 out of x" />
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
